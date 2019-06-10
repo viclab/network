@@ -1,0 +1,33 @@
+@startuml
+hide footbox
+
+skinparam sequence {
+    DividerFontSize 17
+    ParticipantFontSize 17
+    ActorFontSize 17
+    ArrowFontSize 17
+}
+
+actor browser as client
+participant "local proxy" as local
+participant "server proxy" as server
+participant "dest website" as dest
+
+== transfer data ==
+
+client -> local: request data
+activate client
+activate local
+local -> local: encrypt
+local --> server: encrypted request data
+activate server
+server -> server: decrypt
+server -> dest: request data
+activate dest
+dest -> server: response data
+server -> server: encrypt
+server --> local: encrypted response data
+local -> local: decrypt
+local -> client: response data
+
+@enduml

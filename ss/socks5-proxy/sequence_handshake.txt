@@ -1,0 +1,37 @@
+@startuml
+hide footbox
+
+skinparam sequence {
+    DividerFontSize 17
+    ParticipantFontSize 17
+    ActorFontSize 17
+    ArrowFontSize 17
+}
+
+== handshake ==
+actor browser as client
+participant "local proxy" as local
+participant "server proxy" as server
+participant "dest website" as dest
+
+client -> local: connect
+activate client
+activate local
+
+client ---> local: 05 01 00
+local -> client: 05 00
+
+client -> local: 05 01 00 01 ...
+local -> server: connect
+activate server
+local --> server: encrypted 05 01 00 01 ...
+server -> server: resolve host
+server -> dest: connect
+activate dest
+server --> local: encrypted 05 00 00 ...
+local -> client: 05 00 00 01
+deactivate client
+deactivate local
+deactivate server
+
+@enduml
